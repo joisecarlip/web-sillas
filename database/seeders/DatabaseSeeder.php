@@ -26,5 +26,6 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call(RedesSeeder::class);
+        $this->call(ExpertosSeeder::class);
     }
 }

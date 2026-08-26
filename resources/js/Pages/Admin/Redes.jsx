@@ -1,6 +1,44 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+
+// Popup Emergente de Éxito (centrado, animado)
+function SuccessPopup({ message, show, onClose }) {
+    useEffect(() => {
+        if (show) {
+            const timer = setTimeout(() => onClose(), 2500);
+            return () => clearTimeout(timer);
+        }
+    }, [show, onClose]);
+
+    if (!show) return null;
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center" onClick={onClose}>
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]"></div>
+            <div 
+                className="relative bg-white rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.15)] px-10 py-8 flex flex-col items-center max-w-xs w-full animate-[popIn_0.4s_cubic-bezier(0.34,1.56,0.64,1)]"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#01c38e] to-[#01a679] flex items-center justify-center mb-5 shadow-[0_8px_25px_rgba(1,195,142,0.4)]">
+                    <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                            style={{ strokeDasharray: 30, strokeDashoffset: 30, animation: 'drawCheck 0.5s ease-out 0.3s forwards' }}
+                        />
+                    </svg>
+                </div>
+                <h4 className="text-lg font-extrabold text-[#132d46] mb-1 text-center">¡Listo!</h4>
+                <p className="text-sm text-gray-500 font-medium text-center">{message}</p>
+            </div>
+
+            <style>{`
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes popIn { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+                @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+            `}</style>
+        </div>
+    );
+}
 
 const iconsMap = {
     "Facebook": {
@@ -38,6 +76,15 @@ const iconsMap = {
 };
 
 export default function Redes({ redes }) {
+    const { flash } = usePage().props;
+    const [toastMessage, setToastMessage] = useState('');
+
+    useEffect(() => {
+        if (flash?.success) {
+            setToastMessage(flash.success);
+        }
+    }, [flash]);
+
     return (
         <AuthenticatedLayout
             header={
@@ -63,24 +110,34 @@ export default function Redes({ redes }) {
                     {/* Body */}
                     <div className="divide-y divide-gray-100">
                         {redes.map((red) => (
-                            <RedFormItem key={red.id} red={red} />
+                            <RedFormItem key={red.id} red={red} onSuccess={() => setToastMessage('Red social actualizada correctamente.')} />
                         ))}
                     </div>
                 </div>
+
+                {/* Popup de Éxito */}
+                <SuccessPopup 
+                    show={!!toastMessage} 
+                    message={toastMessage} 
+                    onClose={() => setToastMessage('')} 
+                />
             </div>
         </AuthenticatedLayout>
     );
 }
 
-function RedFormItem({ red }) {
-    const { data, setData, put, processing, recentlySuccessful, errors } = useForm({
+function RedFormItem({ red, onSuccess }) {
+    const { data, setData, put, processing, errors } = useForm({
         url: red.url || ''
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         put(route('admin.redes.update', red.id), {
-            preserveScroll: true
+            preserveScroll: true,
+            onSuccess: () => {
+                if (onSuccess) onSuccess();
+            }
         });
     };
 
@@ -121,11 +178,7 @@ function RedFormItem({ red }) {
                     disabled={processing}
                     className="relative overflow-hidden bg-[#f0f4f8] hover:bg-[#132d46] text-[#132d46] hover:text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all duration-300 disabled:opacity-50 group-hover:shadow-md flex items-center justify-center min-w-[100px]"
                 >
-                    {recentlySuccessful ? (
-                        <span className="text-[#01c38e] animate-[pulse_1s_ease-in-out]">¡Guardado!</span>
-                    ) : (
-                        <span>Actualizar</span>
-                    )}
+                    <span>Actualizar</span>
                 </button>
             </div>
         </form>

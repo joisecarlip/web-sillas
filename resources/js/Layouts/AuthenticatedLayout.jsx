@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function AuthenticatedLayout({ header, children }) {
+export default function AuthenticatedLayout({ header, actions, children }) {
     const user = usePage().props.auth.user;
     const { url } = usePage();
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -116,12 +116,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <span className="w-2 h-2 rounded-full bg-[#01c38e] mr-2 animate-pulse"></span>
                                     Sistema Activo
                                 </div>
-                                <button className="bg-[#01c38e] hover:bg-[#01a87b] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md transition-colors flex items-center">
-                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    Nueva Acción
-                                </button>
+                                {actions && (
+                                    <div className="flex items-center">
+                                        {actions}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

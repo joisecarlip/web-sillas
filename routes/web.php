@@ -27,9 +27,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         return Inertia::render('Admin/Telas');
     })->name('telas');
 
-    Route::get('/nosotros', function () {
-        return Inertia::render('Admin/Nosotros');
-    })->name('nosotros');
+    Route::get('/nosotros', [\App\Http\Controllers\Admin\NosotrosController::class, 'index'])->name('nosotros');
+    Route::post('/nosotros', [\App\Http\Controllers\Admin\NosotrosController::class, 'store'])->name('nosotros.store');
+    Route::put('/nosotros/{experto}', [\App\Http\Controllers\Admin\NosotrosController::class, 'update'])->name('nosotros.update');
+    Route::delete('/nosotros/{experto}', [\App\Http\Controllers\Admin\NosotrosController::class, 'destroy'])->name('nosotros.destroy');
 
     Route::get('/mensajes', function () {
         return Inertia::render('Admin/Mensajes');
@@ -54,7 +55,9 @@ Route::get('/personaliza', function () {
 });
 
 Route::get('/nosotros', function () {
-    return Inertia::render('Nosotros');
+    return Inertia::render('Nosotros', [
+        'expertos' => \App\Models\Experto::all()
+    ]);
 });
 
 Route::get('/contacto', function () {
