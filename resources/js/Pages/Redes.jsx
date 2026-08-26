@@ -1,7 +1,18 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
 import Header from '@/Components/Header';
 
 export default function Redes() {
+    const [isExiting, setIsExiting] = useState(false);
+
+    const handleSecretClick = (e) => {
+        e.preventDefault();
+        setIsExiting(true);
+        setTimeout(() => {
+            router.visit(route('login'));
+        }, 600);
+    };
+
     // Definimos las redes sociales
     const redes = [
         {
@@ -47,7 +58,7 @@ export default function Redes() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#1a1e29] to-[#132d46] text-white font-sans flex flex-col relative overflow-hidden">
+        <div className={`min-h-screen bg-gradient-to-br from-[#1a1e29] to-[#132d46] text-white font-sans flex flex-col relative overflow-hidden transition-all duration-700 ease-in-out ${isExiting ? 'opacity-0 scale-105 filter blur-sm' : 'opacity-100 scale-100 filter blur-0'}`}>
             <Head title="Redes Sociales" />
             <Header />
             
@@ -101,12 +112,12 @@ export default function Redes() {
             </main>
 
             {/* Candadito secreto al login */}
-            <Link href="/login" className="absolute bottom-4 right-4 text-white/10 hover:text-white/30 transition-colors w-5 h-5 z-20 md:bottom-6 md:right-6">
+            <a href={route('login')} onClick={handleSecretClick} className="absolute bottom-4 right-4 text-white/10 hover:text-white/30 transition-colors w-5 h-5 z-20 md:bottom-6 md:right-6 cursor-pointer">
                 <svg fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0110 0v4"></path>
                 </svg>
-            </Link>
+            </a>
         </div>
     );
 }
