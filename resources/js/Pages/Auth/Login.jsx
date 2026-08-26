@@ -22,33 +22,30 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Log in" />
 
             {/* LEFT SIDE - BLUE/BRAND AREA */}
-            <div className="w-full md:w-[55%] bg-transparent h-[35vh] md:h-full flex flex-col justify-center items-center p-8 relative text-white z-0">
+            <div className="w-full md:w-[55%] bg-transparent h-[35vh] md:h-full flex flex-col justify-center items-center p-8 relative text-white z-0 opacity-0 animate-fade-in">
                 <div className="text-center z-10 max-w-lg">
-                    <h3 className="text-sm font-bold tracking-[0.2em] mb-6 uppercase text-white/90">BIENVENIDO A</h3>
+                    <h3 className="text-4xl md:text-6xl font-cursive text-[#01c38e] font-bold drop-shadow-sm mb-4 md:mb-8 capitalize transform -rotate-2 opacity-0 animate-slide-right" style={{ animationDelay: '0.2s' }}>Bienvenido a</h3>
                     
                     {/* Logo */}
-                    <div className="flex justify-center mb-4">
-                        <div className="w-16 h-16 bg-[#01c38e] rounded-xl flex items-center justify-center shadow-lg">
-                            <span className="text-3xl font-extrabold text-[#132d46]">S</span>
-                        </div>
+                    <div className="flex justify-center mb-4 md:mb-8 opacity-0 animate-slide-up hover:scale-125 hover:rotate-6 transition-all duration-500 cursor-pointer" style={{ animationDelay: '0.4s' }}>
+                        <img src="/images/logo.png" alt="Logo" className="w-32 md:w-56 h-auto object-contain drop-shadow-2xl" />
                     </div>
-                    <h1 className="text-2xl font-bold mb-6">Sillas Elegantes</h1>
                     
-                    <p className="text-sm text-white/80 leading-relaxed font-light px-4 hidden md:block">
+                    <p className="text-sm text-white/80 leading-relaxed font-light px-4 hidden md:block opacity-0 animate-fade-in" style={{ animationDelay: '0.6s' }}>
                         Descubre nuestra exclusiva colección de muebles y sillas. Diseñados para brindar confort y transformar tus espacios con elegancia.
                     </p>
                 </div>
             </div>
 
             {/* RIGHT SIDE - WHITE FORM */}
-            <div className="w-full md:w-[45%] bg-white h-[65vh] md:h-full relative flex flex-col justify-center items-center z-10 rounded-t-[40px] md:rounded-tr-none md:rounded-l-[40px] shadow-[-10px_0_30px_rgba(0,0,0,0.15)]">
+            <div className="w-full md:w-[45%] bg-white h-[65vh] md:h-full relative flex flex-col justify-center items-center z-10 rounded-t-[40px] md:rounded-tr-none md:rounded-l-[40px] shadow-[-10px_0_30px_rgba(0,0,0,0.15)] opacity-0 animate-fade-in" style={{ animationDelay: '0.1s' }}>
                 
                 <div className="w-full max-w-md px-8 md:px-12 mt-8 md:mt-0">
-                    <h2 className="text-lg md:text-xl font-extrabold text-gray-800 uppercase tracking-widest mb-10 text-center md:text-left">INICIA SESIÓN EN TU CUENTA</h2>
+                    <h2 className="text-lg md:text-xl font-extrabold text-gray-800 uppercase tracking-widest mb-10 text-center md:text-left opacity-0 animate-slide-up" style={{ animationDelay: '0.3s' }}>INICIA SESIÓN EN TU CUENTA</h2>
                     
                     {status && <div className="mb-4 text-sm font-medium text-green-600">{status}</div>}
 
-                    <form onSubmit={submit} className="space-y-8">
+                    <form onSubmit={submit} className="space-y-8 opacity-0 animate-slide-up-delayed">
                         
                         {/* Email Input */}
                         <div className="relative mt-8">
@@ -64,7 +61,7 @@ export default function Login({ status, canResetPassword }) {
                                 required
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
-                                className={`peer block w-full border-2 ${errors.email ? 'border-red-500' : 'border-gray-200'} rounded-full bg-white py-3 pl-11 pr-4 text-sm font-bold text-gray-800 focus:border-[#01c38e] focus:ring-0 transition-colors [&:-webkit-autofill]:bg-white [&:-webkit-autofill]:shadow-[0_0_0_1000px_white_inset]`}
+                                className={`peer block w-full border-2 ${errors.email ? 'border-red-500' : 'border-gray-200'} rounded-full bg-white py-3 pl-11 pr-4 text-sm font-bold text-gray-800 focus:border-[#01c38e] focus:ring-0 focus:shadow-[0_0_20px_rgba(1,195,142,0.4)] hover:border-[#01c38e] hover:shadow-[0_0_15px_rgba(1,195,142,0.3)] hover:-translate-y-1 transition-all duration-300 [&:-webkit-autofill]:bg-white [&:-webkit-autofill]:shadow-[0_0_0_1000px_white_inset]`}
                                 placeholder=" "
                                 autoComplete="username"
                             />
@@ -91,7 +88,7 @@ export default function Login({ status, canResetPassword }) {
                                 required
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
-                                className={`peer block w-full border-2 ${errors.password ? 'border-red-500' : 'border-gray-200'} rounded-full bg-white py-3 pl-11 pr-12 text-sm font-bold text-gray-800 focus:border-[#01c38e] focus:ring-0 transition-colors [&:-webkit-autofill]:bg-white [&:-webkit-autofill]:shadow-[0_0_0_1000px_white_inset]`}
+                                className={`peer block w-full border-2 ${errors.password ? 'border-red-500' : 'border-gray-200'} rounded-full bg-white py-3 pl-11 pr-12 text-sm font-bold text-gray-800 focus:border-[#01c38e] focus:ring-0 focus:shadow-[0_0_20px_rgba(1,195,142,0.4)] hover:border-[#01c38e] hover:shadow-[0_0_15px_rgba(1,195,142,0.3)] hover:-translate-y-1 transition-all duration-300 [&:-webkit-autofill]:bg-white [&:-webkit-autofill]:shadow-[0_0_0_1000px_white_inset]`}
                                 placeholder=" "
                                 autoComplete="current-password"
                             />
@@ -149,7 +146,7 @@ export default function Login({ status, canResetPassword }) {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full bg-[#01c38e] hover:bg-[#01a87b] text-white py-3.5 rounded-full text-sm font-bold tracking-wider transition-colors disabled:opacity-70 shadow-md mt-4"
+                                className="w-full bg-[#01c38e] hover:bg-[#01a87b] hover:shadow-[0_20px_35px_rgba(1,195,142,0.6)] hover:-translate-y-2 hover:scale-[1.02] text-white py-3.5 rounded-full text-sm font-bold tracking-wider transition-all duration-300 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none shadow-md mt-4 opacity-0 animate-slide-up-delayed-2"
                             >
                                 Ingresar
                             </button>

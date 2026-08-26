@@ -26,7 +26,26 @@ export default {
             keyframes: {
                 shimmer: {
                     '100%': { transform: 'translateX(100%)' },
+                },
+                fadeIn: {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
+                slideUp: {
+                    '0%': { opacity: '0', transform: 'translateY(20px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+                slideRight: {
+                    '0%': { opacity: '0', transform: 'translateX(-20px)' },
+                    '100%': { opacity: '1', transform: 'translateX(0)' },
                 }
+            },
+            animation: {
+                'fade-in': 'fadeIn 0.8s ease-out forwards',
+                'slide-up': 'slideUp 0.8s ease-out forwards',
+                'slide-up-delayed': 'slideUp 0.8s ease-out 0.2s forwards',
+                'slide-up-delayed-2': 'slideUp 0.8s ease-out 0.4s forwards',
+                'slide-right': 'slideRight 0.8s ease-out forwards',
             }
         },
     },
