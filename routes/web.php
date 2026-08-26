@@ -23,9 +23,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         return Inertia::render('Admin/Productos');
     })->name('productos');
 
-    Route::get('/telas', function () {
-        return Inertia::render('Admin/Telas');
-    })->name('telas');
+    Route::get('/telas', [\App\Http\Controllers\Admin\TelasController::class, 'index'])->name('telas');
+    Route::post('/telas', [\App\Http\Controllers\Admin\TelasController::class, 'store'])->name('telas.store');
+    Route::post('/telas/{tela}', [\App\Http\Controllers\Admin\TelasController::class, 'update'])->name('telas.update');
+    Route::delete('/telas/{tela}', [\App\Http\Controllers\Admin\TelasController::class, 'destroy'])->name('telas.destroy');
 
     Route::get('/nosotros', [\App\Http\Controllers\Admin\NosotrosController::class, 'index'])->name('nosotros');
     Route::post('/nosotros', [\App\Http\Controllers\Admin\NosotrosController::class, 'store'])->name('nosotros.store');
