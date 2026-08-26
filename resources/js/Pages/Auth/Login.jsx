@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 export default function Login({ status, canResetPassword }) {
     const [showPassword, setShowPassword] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -135,9 +136,13 @@ export default function Login({ status, canResetPassword }) {
                                 </label>
                                 
                                 {canResetPassword && (
-                                    <Link href={route('password.request')} className="text-[#01c38e] hover:text-[#01a87b] transition-colors">
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setShowAlert(true)} 
+                                        className="text-[#01c38e] hover:text-[#01a87b] transition-colors"
+                                    >
                                         ¿Olvidaste tu contraseña?
-                                    </Link>
+                                    </button>
                                 )}
                             </div>
 
@@ -150,13 +155,32 @@ export default function Login({ status, canResetPassword }) {
                             </button>
                         </div>
                     </form>
-                    
-                    {/* Sign Up prompt at bottom */}
-                    <div className="mt-8 text-center text-[11px] font-bold text-gray-500">
-                        ¿No tienes una cuenta? <Link href={route('register')} className="text-[#01c38e] hover:text-[#01a87b]">Regístrate</Link>
-                    </div>
                 </div>
             </div>
+            {/* Custom Alert Modal */}
+            {showAlert && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#132d46]/80 backdrop-blur-sm transition-opacity">
+                    <div className="bg-white rounded-[30px] p-8 max-w-sm w-full shadow-2xl relative flex flex-col items-center text-center">
+                        <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-extrabold text-[#132d46] mb-2 uppercase tracking-wide">Acceso Restringido</h3>
+                        <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+                            Por razones de seguridad, el restablecimiento de contraseña automático está deshabilitado. 
+                            <br/><br/>
+                            Por favor, comunícate con el <strong>Administrador del Sistema</strong> para recuperar tu acceso.
+                        </p>
+                        <button 
+                            onClick={() => setShowAlert(false)}
+                            className="w-full bg-[#132d46] hover:bg-[#1a3d60] text-white py-3.5 rounded-full text-sm font-bold tracking-wider transition-colors shadow-md"
+                        >
+                            Entendido
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
