@@ -17,12 +17,16 @@ export default function Contacto() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Simulación de envío exitoso
-        setIsSubmitted(true);
-        setTimeout(() => {
-            setIsSubmitted(false);
-            reset();
-        }, 3000);
+        post(route('contacto.store'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsSubmitted(true);
+                reset();
+                setTimeout(() => {
+                    setIsSubmitted(false);
+                }, 4000);
+            }
+        });
     };
 
     return (

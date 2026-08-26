@@ -32,9 +32,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::put('/nosotros/{experto}', [\App\Http\Controllers\Admin\NosotrosController::class, 'update'])->name('nosotros.update');
     Route::delete('/nosotros/{experto}', [\App\Http\Controllers\Admin\NosotrosController::class, 'destroy'])->name('nosotros.destroy');
 
-    Route::get('/mensajes', function () {
-        return Inertia::render('Admin/Mensajes');
-    })->name('mensajes');
+    Route::get('/mensajes', [\App\Http\Controllers\Admin\MensajesController::class, 'index'])->name('mensajes');
+    Route::post('/mensajes/{mensaje}/reply', [\App\Http\Controllers\Admin\MensajesController::class, 'reply'])->name('mensajes.reply');
+    Route::post('/mensajes/plantillas', [\App\Http\Controllers\Admin\MensajesController::class, 'storePlantilla'])->name('mensajes.plantillas.store');
+    Route::put('/mensajes/plantillas/{plantilla}', [\App\Http\Controllers\Admin\MensajesController::class, 'updatePlantilla'])->name('mensajes.plantillas.update');
+    Route::delete('/mensajes/plantillas/{plantilla}', [\App\Http\Controllers\Admin\MensajesController::class, 'destroyPlantilla'])->name('mensajes.plantillas.destroy');
 
     Route::get('/redes', [\App\Http\Controllers\Admin\RedesController::class, 'index'])->name('redes');
     Route::put('/redes/{red}', [\App\Http\Controllers\Admin\RedesController::class, 'update'])->name('redes.update');
@@ -62,7 +64,9 @@ Route::get('/nosotros', function () {
 
 Route::get('/contacto', function () {
     return Inertia::render('Contacto');
-});
+})->name('contacto');
+
+Route::post('/contacto', [\App\Http\Controllers\ContactoController::class, 'store'])->name('contacto.store');
 
 Route::get('/redes', function () {
     return Inertia::render('Redes', [
