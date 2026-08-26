@@ -1,7 +1,14 @@
 import { Link, usePage } from '@inertiajs/react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Header() {
     const { url } = usePage();
+    const pcNavRef = useRef(null);
+    const mobileNavRef = useRef(null);
+    
+    const [pcActiveRect, setPcActiveRect] = useState({ left: 0, width: 0, height: 0, top: 0 });
+    const [mobileActiveX, setMobileActiveX] = useState(0);
+    const [isMounted, setIsMounted] = useState(false);
 
     const menuItems = [
         {
@@ -14,25 +21,25 @@ export default function Header() {
             name: 'Catálogo',
             href: '/catalogo',
             active: url.startsWith('/catalogo'),
-            path: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+            path: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4'
         },
         {
             name: 'Personaliza',
             href: '/personaliza',
             active: url.startsWith('/personaliza'),
-            path: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z'
+            path: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4'
         },
         {
             name: 'Nosotros',
             href: '/nosotros',
             active: url.startsWith('/nosotros'),
-            path: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+            path: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z'
         },
         {
             name: 'Contacto',
             href: '/contacto',
             active: url.startsWith('/contacto'),
-            path: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'
+            path: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'
         },
         {
             name: 'Redes',
@@ -42,51 +49,111 @@ export default function Header() {
         }
     ];
 
+    const activeIndex = menuItems.findIndex(item => item.active);
+
+    useEffect(() => {
+        setIsMounted(true);
+        const updatePositions = () => {
+            const idx = activeIndex !== -1 ? activeIndex : 0;
+            
+            // Lógica para PC: Calcular caja del elemento activo usando getBoundingClientRect
+            // Esto soluciona problemas de centrado y offsetParent
+            if (pcNavRef.current) {
+                const links = Array.from(pcNavRef.current.querySelectorAll('a'));
+                const activeEl = links[idx];
+                if (activeEl) {
+                    const navRect = pcNavRef.current.getBoundingClientRect();
+                    const elRect = activeEl.getBoundingClientRect();
+                    setPcActiveRect({
+                        left: elRect.left - navRect.left,
+                        top: elRect.top - navRect.top,
+                        width: elRect.width,
+                        height: elRect.height
+                    });
+                }
+            }
+
+            // Lógica para Móvil: Calcular centro del elemento activo para el punto flotante
+            if (mobileNavRef.current) {
+                const links = Array.from(mobileNavRef.current.querySelectorAll('a'));
+                const activeEl = links[idx];
+                if (activeEl) {
+                    setMobileActiveX(activeEl.offsetLeft + activeEl.offsetWidth / 2);
+                }
+            }
+        };
+
+        const timeout = setTimeout(updatePositions, 100);
+        window.addEventListener('resize', updatePositions);
+        
+        return () => {
+            clearTimeout(timeout);
+            window.removeEventListener('resize', updatePositions);
+        };
+    }, [activeIndex, url]);
+
     return (
         <>
             {/* ====== NAVEGACIÓN PC (PILLS SUPERIOR + LOGO INTEGRADO) ====== */}
-            <header className="hidden md:flex fixed top-6 w-full z-50 pointer-events-none px-6 lg:px-10">
+            <header className={`hidden md:flex fixed top-6 w-full z-50 pointer-events-none px-6 lg:px-10 transition-all duration-700 ease-out ${isMounted ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'}`}>
                 <div className="w-full max-w-[1400px] mx-auto flex items-center h-20 relative">
+                    
                     {/* Menú Centrado Absolutamente */}
                     <div className="absolute left-1/2 -translate-x-1/2 pointer-events-auto">
-                        <nav className="flex items-center bg-[#f5f0f0] rounded-full p-1.5 shadow-lg shadow-black/10">
-                            <div className="flex items-center px-1 space-x-1">
-                                {menuItems.map((item) => (
-                                    <Link
-                                        key={item.name}
-                                        href={item.href}
-                                        className={`flex items-center px-4 py-2 text-sm font-medium transition-colors rounded-full ${
-                                            item.active
-                                                ? 'text-white bg-[#5e1923] shadow-sm'
-                                                : 'text-gray-600 hover:text-gray-900 hover:bg-black/5'
-                                        }`}
-                                    >
-                                        <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d={item.path} />
-                                        </svg>
-                                        {item.name}
-                                    </Link>
-                                ))}
+                        <nav ref={pcNavRef} className="relative flex items-center bg-[#f5f0f0]/90 backdrop-blur-md rounded-full p-2 shadow-xl shadow-black/10 border border-white/40">
+                            
+                            {/* ====== EFECTO PC: Píldora animada deslizante de fondo ====== */}
+                            <div 
+                                className="absolute bg-gradient-to-r from-[#01c38e] to-[#01a679] rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-md"
+                                style={{
+                                    left: `${pcActiveRect.left}px`,
+                                    top: `${pcActiveRect.top}px`,
+                                    width: `${pcActiveRect.width}px`,
+                                    height: `${pcActiveRect.height}px`,
+                                    opacity: pcActiveRect.width > 0 ? 1 : 0 // Ocultar hasta calcular
+                                }}
+                            />
+
+                            <div className="relative z-10 flex items-center space-x-1">
+                                {menuItems.map((item, idx) => {
+                                    const isActive = activeIndex === idx;
+                                    return (
+                                        <Link
+                                            key={item.name}
+                                            href={item.href}
+                                            className={`flex items-center px-5 py-2.5 text-sm font-semibold transition-all duration-300 rounded-full group ${
+                                                isActive
+                                                    ? 'text-white drop-shadow-sm scale-105'
+                                                    : 'text-gray-600 hover:text-gray-900 hover:bg-black/5'
+                                            }`}
+                                        >
+                                            <svg className={`w-4 h-4 mr-2 transition-transform duration-300 ${!isActive && 'group-hover:scale-110 group-hover:-rotate-6'}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d={item.path} />
+                                            </svg>
+                                            {item.name}
+                                        </Link>
+                                    )
+                                })}
                             </div>
                         </nav>
                     </div>
 
-                    {/* Logo - Alineado a la derecha, misma línea base */}
+                    {/* Logo - Alineado a la derecha con un leve efecto de resplandor (Glow) al pasar el mouse */}
                     <div className="ml-auto pointer-events-auto flex items-center">
-                        <Link href="/" className="flex items-center justify-center transition-transform hover:scale-105">
+                        <Link href="/" className="flex items-center justify-center transition-all duration-500 hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(1,195,142,0.4)]">
                             <img 
                                 src="/images/logo.png" 
                                 alt="Logo" 
-                                className="h-16 lg:h-20 w-auto object-contain drop-shadow-xl"
+                                className="h-16 lg:h-20 w-auto object-contain drop-shadow-lg"
                             />
                         </Link>
                     </div>
                 </div>
             </header>
 
-            {/* ====== LOGO FLOTANTE PARA MÓVIL ====== */}
-            <div className="md:hidden fixed top-6 right-6 z-50 pointer-events-auto">
-                <Link href="/" className="flex items-center justify-center transition-transform hover:scale-105">
+            {/* ====== LOGO FLOTANTE PARA MÓVIL (Con animación de entrada) ====== */}
+            <div className={`md:hidden fixed top-6 right-6 z-50 pointer-events-auto transition-all duration-700 ease-out delay-100 ${isMounted ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'}`}>
+                <Link href="/" className="flex items-center justify-center transition-all duration-300 hover:scale-110">
                     <img 
                         src="/images/logo.png" 
                         alt="Logo" 
@@ -95,38 +162,53 @@ export default function Header() {
                 </Link>
             </div>
 
-            {/* ====== NAVEGACIÓN MÓVIL (DOCK MINIMALISTA COMO LA IMAGEN) ====== */}
-            <header className="md:hidden fixed bottom-0 left-0 w-full z-50 pointer-events-auto bg-white rounded-t-[32px] drop-shadow-[0_-4px_15px_rgba(0,0,0,0.1)] h-[80px]">
-                <nav className="flex h-full items-center justify-around max-w-lg mx-auto px-4">
-                    {menuItems.map((item) => (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            title={item.name} // Hint de accesibilidad
-                            className="flex flex-col items-center justify-center p-3 relative group"
-                        >
-                            {/* Icono de línea fina como en la imagen */}
-                            <svg 
-                                className={`w-7 h-7 transition-all duration-300 ${
-                                    item.active 
-                                        ? 'text-[#5e1923] scale-[1.15] -translate-y-1' 
-                                        : 'text-gray-800'
-                                }`} 
-                                fill="none" 
-                                stroke="currentColor" 
-                                strokeWidth="1.5" 
-                                viewBox="0 0 24 24"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d={item.path} />
-                            </svg>
-                            
-                            {/* Pequeño punto indicador muy sutil para saber dónde estás sin romper el minimalismo */}
-                            <div className={`absolute bottom-2 w-1.5 h-1.5 rounded-full bg-[#5e1923] transition-all duration-300 ${
-                                item.active ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
-                            }`} />
-                        </Link>
-                    ))}
-                </nav>
+            {/* ====== NAVEGACIÓN MÓVIL (DOCK INFERIOR CON EFECTOS) ====== */}
+            <header className={`md:hidden fixed bottom-0 left-0 w-full z-50 pointer-events-auto bg-white/95 backdrop-blur-xl rounded-t-[32px] drop-shadow-[0_-8px_20px_rgba(0,0,0,0.08)] border-t border-gray-100 h-[80px] transition-all duration-700 ease-out ${isMounted ? 'translate-y-0' : 'translate-y-20'}`}>
+                <div className="relative w-full h-full max-w-lg mx-auto">
+                    
+                    {/* ====== EFECTO MÓVIL: Punto indicador deslizante ====== */}
+                    <div 
+                        className="absolute bottom-[2px] w-1.5 h-1.5 rounded-full bg-[#01c38e] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm"
+                        style={{ 
+                            left: 0,
+                            transform: `translateX(${mobileActiveX - 3}px)`, // -3px para centrar el dot de 6px (w-1.5)
+                            opacity: mobileActiveX > 0 ? 1 : 0
+                        }}
+                    />
+
+                    <nav ref={mobileNavRef} className="relative z-10 flex h-full items-center justify-around px-1">
+                        {menuItems.map((item, idx) => {
+                            const isActive = activeIndex === idx;
+                            return (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className="flex-1 flex flex-col items-center justify-center h-full pt-1 pb-1 group cursor-pointer"
+                                >
+                                    {/* Contenedor del ícono con un rebote de resorte (spring bounce) súper satisfactorio */}
+                                    <div className={`transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                                        isActive 
+                                            ? 'text-[#01c38e] scale-[1.2] -translate-y-[6px] drop-shadow-md' 
+                                            : 'text-gray-400 group-hover:text-gray-700 group-hover:-translate-y-1'
+                                    }`}>
+                                        <svg className="w-[26px] h-[26px]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d={item.path} />
+                                        </svg>
+                                    </div>
+                                    
+                                    {/* El texto también acompaña el movimiento con un pequeño fundido */}
+                                    <span className={`text-[10px] sm:text-[11px] font-semibold mt-1 transition-all duration-500 ${
+                                        isActive 
+                                            ? 'text-[#01c38e] opacity-100 -translate-y-0.5' 
+                                            : 'text-gray-400 opacity-70 group-hover:opacity-100'
+                                    }`}>
+                                        {item.name}
+                                    </span>
+                                </Link>
+                            )
+                        })}
+                    </nav>
+                </div>
             </header>
         </>
     );

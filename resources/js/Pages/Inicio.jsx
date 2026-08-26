@@ -7,7 +7,7 @@ export default function Inicio({ auth }) {
             <Head title="Inicio" />
             
             {/* Fondo rojo oscuro (granate) inspirado en la imagen */}
-            <div className="min-h-screen bg-gradient-to-br from-[#7a1825] to-[#5a1019] text-white font-sans antialiased">
+        <div className="min-h-screen bg-white text-gray-900 font-sans antialiased">
                 <Header />
                 
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 flex flex-col items-center justify-center min-h-screen">
