@@ -14,9 +14,31 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Admin/Dashboard');
+    })->name('dashboard');
+
+    Route::get('/productos', function () {
+        return Inertia::render('Admin/Productos');
+    })->name('productos');
+
+    Route::get('/telas', function () {
+        return Inertia::render('Admin/Telas');
+    })->name('telas');
+
+    Route::get('/nosotros', function () {
+        return Inertia::render('Admin/Nosotros');
+    })->name('nosotros');
+
+    Route::get('/mensajes', function () {
+        return Inertia::render('Admin/Mensajes');
+    })->name('mensajes');
+
+    Route::get('/redes', function () {
+        return Inertia::render('Admin/Redes');
+    })->name('redes');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
