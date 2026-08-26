@@ -2,7 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import Header from '@/Components/Header';
 
-export default function Redes() {
+export default function Redes({ redes: dbRedes }) {
     const [isExiting, setIsExiting] = useState(false);
 
     const handleSecretClick = (e) => {
@@ -13,11 +13,17 @@ export default function Redes() {
         }, 600);
     };
 
+    // Obtenemos el link de la base de datos o usamos #
+    const getDbUrl = (name) => {
+        const found = dbRedes?.find(r => r.nombre === name);
+        return found?.url || '#';
+    };
+
     // Definimos las redes sociales
     const redes = [
         {
             name: "Facebook",
-            href: "#",
+            href: getDbUrl("Facebook"),
             color: "bg-[#1877F2] hover:bg-[#1877F2]/90",
             icon: (
                 <svg className="w-6 h-6 md:w-7 md:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -27,7 +33,7 @@ export default function Redes() {
         },
         {
             name: "Instagram",
-            href: "#",
+            href: getDbUrl("Instagram"),
             color: "bg-gradient-to-tr from-[#FFDC80] via-[#F56040] to-[#C13584] hover:opacity-90",
             icon: (
                 <svg className="w-6 h-6 md:w-7 md:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -37,7 +43,7 @@ export default function Redes() {
         },
         {
             name: "TikTok",
-            href: "#",
+            href: getDbUrl("TikTok"),
             color: "bg-[#000000] hover:bg-[#111111]",
             icon: (
                 <svg className="w-6 h-6 md:w-7 md:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -47,7 +53,7 @@ export default function Redes() {
         },
         {
             name: "WhatsApp",
-            href: "#",
+            href: getDbUrl("WhatsApp"),
             color: "bg-[#25D366] hover:bg-[#25D366]/90",
             icon: (
                 <svg className="w-6 h-6 md:w-7 md:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">

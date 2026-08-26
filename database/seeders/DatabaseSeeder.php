@@ -17,10 +17,14 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Jose Carlos',
-            'email' => 'jiquise@est.unap.edu.pe',
-            'password' => bcrypt('@Josecarlos@.22'),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'jiquise@est.unap.edu.pe'],
+            [
+                'name' => 'Jose Carlos',
+                'password' => bcrypt('@Josecarlos@.22'),
+            ]
+        );
+
+        $this->call(RedesSeeder::class);
     }
 }

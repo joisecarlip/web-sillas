@@ -35,9 +35,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         return Inertia::render('Admin/Mensajes');
     })->name('mensajes');
 
-    Route::get('/redes', function () {
-        return Inertia::render('Admin/Redes');
-    })->name('redes');
+    Route::get('/redes', [\App\Http\Controllers\Admin\RedesController::class, 'index'])->name('redes');
+    Route::put('/redes/{red}', [\App\Http\Controllers\Admin\RedesController::class, 'update'])->name('redes.update');
 });
 
 Route::middleware('auth')->group(function () {
@@ -63,7 +62,9 @@ Route::get('/contacto', function () {
 });
 
 Route::get('/redes', function () {
-    return Inertia::render('Redes');
+    return Inertia::render('Redes', [
+        'redes' => \App\Models\Red::all()
+    ]);
 });
 
 
