@@ -144,7 +144,7 @@ export default function Header() {
                             <img 
                                 src="/images/logo.png" 
                                 alt="Logo" 
-                                className="h-16 lg:h-20 w-auto object-contain drop-shadow-lg"
+                                className={`h-24 lg:h-32 w-auto object-contain drop-shadow-lg ${!url.startsWith('/redes') ? 'brightness-0 opacity-90' : ''}`}
                             />
                         </Link>
                     </div>
@@ -157,7 +157,7 @@ export default function Header() {
                     <img 
                         src="/images/logo.png" 
                         alt="Logo" 
-                        className="h-14 w-auto object-contain drop-shadow-xl"
+                        className={`h-20 sm:h-24 w-auto object-contain drop-shadow-xl ${!url.startsWith('/redes') ? 'brightness-0 opacity-90' : ''}`}
                     />
                 </Link>
             </div>
