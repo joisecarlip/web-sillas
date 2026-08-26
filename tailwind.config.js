@@ -14,6 +14,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Outfit', ...defaultTheme.fontFamily.sans],
+                cursive: ['Caveat', 'cursive'],
             },
             colors: {
                 brand: {
@@ -22,6 +23,11 @@ export default {
                     darker: '#1a1e29',
                 },
             },
+            keyframes: {
+                shimmer: {
+                    '100%': { transform: 'translateX(100%)' },
+                }
+            }
         },
     },
 
