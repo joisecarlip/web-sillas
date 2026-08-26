@@ -34,7 +34,7 @@ export default function Inicio() {
             <Head title="Inicio" />
             <Header />
             
-            <main className="w-full min-h-screen md:h-screen pt-20 md:pt-0 flex flex-col md:flex-row">
+            <main className="w-full min-h-screen md:h-screen pt-8 md:pt-0 flex flex-col md:flex-row">
                 
                 {/* LEFT COLUMN - TEXT */}
                 <div className="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-12 lg:px-20 py-8 md:py-0 relative z-10">
