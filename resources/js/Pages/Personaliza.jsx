@@ -111,8 +111,14 @@ export default function Personaliza({ telas = [] }) {
 
                     <div className="relative w-full max-w-md aspect-square z-10 flex justify-center items-center">
                         
-                        {/* Fondo Mancha "Vaca" (Blob) centrado perfectamente detrás de la silla */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] pb-[130%] bg-[#01c38e]/10 animate-blob pointer-events-none" style={{ zIndex: -1 }}></div>
+                        {/* Fondo Mancha "Vaca" (Blob) con degradado radial */}
+                        <div 
+                            className="absolute -top-[10%] -left-[10%] -translate-x-1/2 -translate-y-1/2 w-[130%] aspect-square animate-blob pointer-events-none" 
+                            style={{ 
+                                zIndex: -1,
+                                background: 'radial-gradient(circle at center, rgba(1,195,142,0.05) 10%, rgba(1,195,142,0.3) 80%)'
+                            }}
+                        ></div>
 
                         {/* Capa 1: Fierro, con filtro de color aproximado */}
                         {/* Capa 1: Fierro con sistema avanzado de tinte Hexadecimal */}
