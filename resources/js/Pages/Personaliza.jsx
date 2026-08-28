@@ -62,6 +62,7 @@ const SOMBRA_BASE_FIERRO = 'drop-shadow(0px 15px 20px rgba(0,0,0,0.35))';
 export default function Personaliza({ telas = [] }) {
     const [fierroColor, setFierroColor] = useState('blanco');
     const [selectedTela, setSelectedTela] = useState(telas.length > 0 ? telas[0] : null);
+    const [currentStep, setCurrentStep] = useState(1);
 
     // Generamos las opciones de fierro dinámicamente desde la variable global de arriba
     const fierroOptions = Object.keys(CONFIG_COLORES_FIERRO).map(key => ({
@@ -100,14 +101,18 @@ export default function Personaliza({ telas = [] }) {
     ];
 
     return (
-        <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-[#01c38e] selection:text-white">
+        <div className="h-screen flex flex-col bg-white text-gray-900 font-sans selection:bg-[#01c38e] selection:text-white overflow-hidden">
             <Head title="Personaliza tu Silla" />
             <Header />
 
-            <main className="pt-24 min-h-screen flex flex-col md:flex-row">
-                {/* LADO IZQUIERDO: Previsualización 2D por capas */}
-                <div className="w-full md:w-1/2 bg-gray-50 relative flex items-center justify-center p-8 min-h-[50vh] md:min-h-[calc(100vh-6rem)]">
-                    <div className="relative w-full max-w-md aspect-square">
+            <main className="flex-1 pt-20 flex flex-col md:flex-row h-full overflow-hidden">
+                {/* LADO IZQUIERDO: Visualizador de Silla 3D/Imagen */}
+                <div className="relative w-full md:w-1/2 h-[400px] md:h-full bg-white flex justify-center items-center overflow-visible">
+
+                    <div className="relative w-full max-w-md aspect-square z-10 flex justify-center items-center">
+                        
+                        {/* Fondo Mancha "Vaca" (Blob) centrado perfectamente detrás de la silla */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] pb-[130%] bg-[#01c38e]/10 animate-blob pointer-events-none" style={{ zIndex: -1 }}></div>
 
                         {/* Capa 1: Fierro, con filtro de color aproximado */}
                         {/* Capa 1: Fierro con sistema avanzado de tinte Hexadecimal */}
@@ -222,77 +227,82 @@ export default function Personaliza({ telas = [] }) {
                 </div>
 
                 {/* LADO DERECHO: Panel Configurador */}
-                <div className="w-full md:w-1/2 p-8 sm:p-12 md:p-16 flex flex-col justify-center overflow-y-auto bg-white border-l border-gray-100">
-                    <h4 className="text-xs tracking-[0.2em] text-[#01c38e] uppercase mb-4 font-bold">Configurador</h4>
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-[#132d46] mb-4 leading-tight">Personaliza tu silla.</h1>
-                    <p className="text-gray-500 mb-10 text-base">Elige cada detalle y crea una pieza que hable de tu espacio.</p>
+                <div className="w-full md:w-1/2 h-full p-8 sm:p-12 md:p-16 flex flex-col justify-start bg-white">
+                    <h4 className="text-xs tracking-[0.2em] text-[#01c38e] uppercase mb-4 font-bold flex-shrink-0">Configurador</h4>
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-[#132d46] mb-4 leading-tight flex-shrink-0">Personaliza tu silla.</h1>
+                    <p className="text-gray-500 mb-8 text-base flex-shrink-0">Elige cada detalle y crea una pieza que hable de tu espacio.</p>
 
-                    <div className="flex border-b border-gray-200 mb-10 gap-8 text-[11px] font-bold tracking-widest uppercase">
-                        <div className="pb-3 border-b-2 border-[#132d46] text-[#132d46]">
-                            <span className="text-gray-400 mr-2">01</span> Fierro
+                    <div className="flex border-b border-gray-200 mb-8 gap-8 text-[11px] font-bold tracking-widest uppercase cursor-pointer select-none flex-shrink-0">
+                        <div 
+                            onClick={() => setCurrentStep(1)}
+                            className={`pb-3 border-b-2 transition-colors ${currentStep === 1 ? 'border-[#132d46] text-[#132d46]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
+                        >
+                            <span className={`${currentStep === 1 ? 'text-gray-400' : ''} mr-2`}>01</span> Fierro
                         </div>
-                        <div className="pb-3 text-gray-400 border-b-2 border-transparent">
-                            <span className="mr-2">02</span> Tela
-                        </div>
-                    </div>
-
-                    {/* PASO 1: FIERRO */}
-                    <div className="mb-10 animate-fade-in">
-                        <h2 className="text-xl font-serif text-[#132d46] mb-5">Color del Fierro</h2>
-                        <div className="flex flex-wrap gap-3">
-                            {fierroOptions.map((fierro) => (
-                                <button
-                                    key={fierro.id}
-                                    onClick={() => setFierroColor(fierro.id)}
-                                    className={`flex items-center gap-3 px-4 py-2 border rounded-full transition-all duration-300 ${
-                                        fierroColor === fierro.id
-                                            ? 'border-[#01c38e] bg-[#01c38e]/10 text-[#132d46] ring-1 ring-[#01c38e]/50'
-                                            : 'border-gray-200 text-gray-500 hover:border-gray-300'
-                                    }`}
-                                >
-                                    <span
-                                        className="w-4 h-4 rounded-full border border-gray-200 shadow-sm"
-                                        style={{ backgroundColor: fierro.hex }}
-                                    ></span>
-                                    <span className="text-xs font-bold">{fierro.name}</span>
-                                </button>
-                            ))}
+                        <div 
+                            onClick={() => setCurrentStep(2)}
+                            className={`pb-3 border-b-2 transition-colors ${currentStep === 2 ? 'border-[#132d46] text-[#132d46]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
+                        >
+                            <span className={`${currentStep === 2 ? 'text-gray-400' : ''} mr-2`}>02</span> Tela
                         </div>
                     </div>
 
-                    {/* PASO 2: TELA */}
-                    <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-                        <h2 className="text-xl font-serif text-[#132d46] mb-5">Tapiz / Tela</h2>
-
-                        {telas.length === 0 ? (
-                            <p className="text-gray-400 text-sm">No hay telas disponibles en la base de datos.</p>
-                        ) : (
-                            <div className="flex flex-wrap gap-3">
-                                {telas.map((tela) => (
+                    {/* CONTENEDOR DESLIZABLE PARA LOS PASOS */}
+                    <div className="flex-1 overflow-y-auto min-h-0 hide-scrollbar pb-6">
+                        {/* PASO 1: FIERRO */}
+                        {currentStep === 1 && (
+                            <div className="animate-fade-in w-full">
+                                <div className="flex flex-wrap gap-4 sm:gap-6">
+                                {fierroOptions.map((fierro) => (
                                     <button
-                                        key={tela.id}
-                                        onClick={() => setSelectedTela(tela)}
-                                        className={`flex items-center gap-3 px-4 py-2 border rounded-full transition-all duration-300 ${
-                                            selectedTela?.id === tela.id
-                                                ? 'border-[#01c38e] bg-[#01c38e]/10 text-[#132d46] ring-1 ring-[#01c38e]/50'
-                                                : 'border-gray-200 text-gray-500 hover:border-gray-300'
-                                        }`}
+                                        key={fierro.id}
+                                        onClick={() => setFierroColor(fierro.id)}
+                                        className={`group flex flex-col items-center gap-3 p-2 rounded-xl transition-all duration-300 w-24 sm:w-28`}
                                     >
-                                        {tela.imagen_url && (
-                                            <div
-                                                className="w-5 h-5 rounded-full bg-cover bg-center border border-gray-200 shadow-sm"
-                                                style={{ backgroundImage: `url(${tela.imagen_url})` }}
-                                            ></div>
-                                        )}
-                                        <span className="text-xs font-bold">{tela.nombre}</span>
+                                        <span
+                                            className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 shadow-sm transition-transform duration-300 group-hover:scale-110 ${
+                                                fierroColor === fierro.id ? 'border-[#01c38e] ring-4 ring-[#01c38e]/20' : 'border-gray-200'
+                                            }`}
+                                            style={{ backgroundColor: fierro.hex }}
+                                        ></span>
+                                        <span className={`text-[10px] sm:text-xs font-bold text-center leading-tight ${fierroColor === fierro.id ? 'text-[#01c38e]' : 'text-gray-500 group-hover:text-gray-900'}`}>{fierro.name}</span>
                                     </button>
                                 ))}
+                            </div>
+                        </div>
+                    )}
+
+                        {/* PASO 2: TELA */}
+                        {currentStep === 2 && (
+                            <div className="animate-fade-in w-full">
+                            {telas.length === 0 ? (
+                                <p className="text-gray-400 text-sm">No hay telas disponibles en la base de datos.</p>
+                            ) : (
+                                <div className="flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory scroll-smooth hide-scrollbar w-full">
+                                    {telas.map((tela) => (
+                                        <button
+                                            key={tela.id}
+                                            onClick={() => setSelectedTela(tela)}
+                                            className={`group flex-shrink-0 snap-start flex flex-col items-center gap-3 p-2 rounded-xl transition-all duration-300 w-28 sm:w-36`}
+                                        >
+                                            <div
+                                                className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-cover bg-center border-2 shadow-sm transition-transform duration-300 group-hover:scale-105 ${
+                                                    selectedTela?.id === tela.id ? 'border-[#01c38e] ring-4 ring-[#01c38e]/20' : 'border-gray-200'
+                                                }`}
+                                                style={{ backgroundImage: `url(${tela.imagen_url})` }}
+                                            ></div>
+                                            <span className={`text-[10px] sm:text-xs font-bold text-center leading-tight ${selectedTela?.id === tela.id ? 'text-[#01c38e]' : 'text-gray-500 group-hover:text-gray-900'}`}>{tela.nombre}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                             </div>
                         )}
                     </div>
 
-                    <div className="mt-auto border-t border-gray-100 pt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                        <div>
+                    {/* FOOTER FIJO */}
+                    <div className="border-t border-gray-100 pt-6 flex flex-col sm:flex-row justify-between items-center sm:items-start text-left gap-6 w-full flex-shrink-0 mt-4">
+                        <div className="flex flex-col items-center sm:items-start w-full sm:w-auto text-center sm:text-left">
                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Tu Configuración</p>
                             <p className="text-[#132d46] text-sm font-medium">
                                 Fierro: <span className="font-bold text-[#01c38e]">{fierroOptions.find(f => f.id === fierroColor)?.name}</span>
@@ -301,10 +311,32 @@ export default function Personaliza({ telas = [] }) {
                             </p>
                         </div>
 
-                        <button className="bg-[#132d46] text-white rounded-full px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors shadow-lg flex items-center gap-2 group">
-                            Confirmar
-                            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </button>
+                        <div className="flex items-center gap-4 self-end sm:self-auto w-full sm:w-auto justify-between sm:justify-end">
+                            {currentStep === 2 && (
+                                <button 
+                                    onClick={() => setCurrentStep(1)} 
+                                    className="text-gray-400 hover:text-[#132d46] text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 py-3"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                    Atrás
+                                </button>
+                            )}
+
+                            {currentStep === 1 ? (
+                                <button 
+                                    onClick={() => setCurrentStep(2)} 
+                                    className="bg-[#132d46] text-white rounded-full px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-slate-800 transition-colors shadow-lg flex items-center gap-2 group"
+                                >
+                                    Siguiente
+                                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
+                            ) : (
+                                <button className="bg-[#01c38e] text-white rounded-full px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#01a679] transition-colors shadow-lg flex items-center gap-2 group">
+                                    Confirmar
+                                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </main>
@@ -312,6 +344,27 @@ export default function Personaliza({ telas = [] }) {
             <style>{`
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
                 .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
+
+                /* Animación suave para la "mancha de vaca" orgánica (Blob) */
+                @keyframes blob {
+                    0% { border-radius: 30% 70% 20% 80% / 70% 30% 80% 20%; transform: scale(1) rotate(0deg); }
+                    33% { border-radius: 70% 30% 80% 20% / 20% 80% 30% 70%; transform: scale(1.05) rotate(6deg); }
+                    66% { border-radius: 20% 80% 40% 60% / 80% 20% 60% 40%; transform: scale(0.95) rotate(-6deg); }
+                    100% { border-radius: 30% 70% 20% 80% / 70% 30% 80% 20%; transform: scale(1) rotate(0deg); }
+                }
+                .animate-blob { 
+                    animation: blob 15s ease-in-out infinite alternate; 
+                    border-radius: 30% 70% 20% 80% / 70% 30% 80% 20%;
+                }
+                
+                /* Ocultar barra de desplazamiento para el carrusel horizontal */
+                .hide-scrollbar {
+                    -ms-overflow-style: none;  /* IE and Edge */
+                    scrollbar-width: none;  /* Firefox */
+                }
+                .hide-scrollbar::-webkit-scrollbar {
+                    display: none; /* Chrome, Safari and Opera */
+                }
             `}</style>
         </div>
     );
