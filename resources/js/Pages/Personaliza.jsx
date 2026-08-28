@@ -65,6 +65,7 @@ export default function Personaliza({ telas = [] }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(null); // 'fierro', 'tela', o null
     const [telaSearch, setTelaSearch] = useState('');
+    const [showAllTelas, setShowAllTelas] = useState(false);
 
     const filteredTelas = telas.filter(tela => tela.nombre.toLowerCase().includes(telaSearch.toLowerCase()));
 
@@ -258,7 +259,8 @@ export default function Personaliza({ telas = [] }) {
                             onClick={() => setMobileMenuOpen(mobileMenuOpen === 'fierro' ? null : 'fierro')}
                             className={`w-14 h-14 rounded-full shadow-lg border flex justify-center items-center transition-all ${mobileMenuOpen === 'fierro' ? 'bg-[#132d46] text-white border-transparent scale-110' : 'bg-white text-[#132d46] border-gray-100 hover:bg-gray-50'}`}
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                            {/* Ícono de Estructura de Silla (Fierro) */}
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 3v18M17 12H7v9"></path></svg>
                         </button>
 
                         {/* Botón Tapiz Tela */}
@@ -266,7 +268,8 @@ export default function Personaliza({ telas = [] }) {
                             onClick={() => setMobileMenuOpen(mobileMenuOpen === 'tela' ? null : 'tela')}
                             className={`w-14 h-14 rounded-full shadow-lg border flex justify-center items-center transition-all ${mobileMenuOpen === 'tela' ? 'bg-[#132d46] text-white border-transparent scale-110' : 'bg-white text-[#132d46] border-gray-100 hover:bg-gray-50'}`}
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            {/* Ícono de Asiento/Sofá Tapizado (Tela) */}
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3M3 11v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0ZM5 18v2M19 18v2"></path></svg>
                         </button>
 
                         {/* Botón Confirmar (Check) */}
@@ -311,9 +314,9 @@ export default function Personaliza({ telas = [] }) {
                         </button>
                         <h4 className="text-[11px] tracking-widest text-[#01c38e] uppercase font-bold text-center mb-4">Elige el Tapiz</h4>
                         
-                        {/* Buscador Móvil */}
-                        <div className="mb-4 px-2">
-                            <div className="relative">
+                        {/* Buscador Móvil y Ver Todas */}
+                        <div className="mb-4 px-2 flex items-center gap-3">
+                            <div className="relative flex-1">
                                 <input
                                     type="text"
                                     placeholder="Buscar tapiz..."
@@ -323,6 +326,12 @@ export default function Personaliza({ telas = [] }) {
                                 />
                                 <svg className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
+                            <button 
+                                onClick={() => setShowAllTelas(true)}
+                                className="w-11 h-11 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-xl text-gray-500 hover:bg-[#01c38e] hover:text-white transition-colors"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            </button>
                         </div>
 
                         {filteredTelas.length === 0 ? (
@@ -372,17 +381,26 @@ export default function Personaliza({ telas = [] }) {
                             </div>
                         </div>
 
-                        {/* Buscador PC (junto a las pestañas) */}
+                        {/* Buscador PC (junto a las pestañas) y Botón Ver Todas */}
                         {currentStep === 2 && (
-                            <div className="hidden md:block relative w-56 pb-2">
-                                <input
-                                    type="text"
-                                    placeholder="Buscar tapiz por nombre..."
-                                    value={telaSearch}
-                                    onChange={(e) => setTelaSearch(e.target.value)}
-                                    className="w-full bg-gray-50 border-transparent focus:border-[#01c38e] focus:ring-[#01c38e] rounded-xl text-xs pl-8 py-2 shadow-inner"
-                                />
-                                <svg className="w-3 h-3 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 mt-[-4px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <div className="hidden md:flex items-center gap-4 relative pb-2">
+                                <button 
+                                    onClick={() => setShowAllTelas(true)}
+                                    className="text-[10px] uppercase tracking-widest font-bold text-[#01c38e] hover:text-[#132d46] transition-colors whitespace-nowrap flex items-center gap-1"
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                    Ver todas
+                                </button>
+                                <div className="relative w-56">
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar tapiz por nombre..."
+                                        value={telaSearch}
+                                        onChange={(e) => setTelaSearch(e.target.value)}
+                                        className="w-full bg-gray-50 border-transparent focus:border-[#01c38e] focus:ring-[#01c38e] rounded-xl text-xs pl-8 py-2 shadow-inner"
+                                    />
+                                    <svg className="w-3 h-3 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 mt-[-1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -484,6 +502,52 @@ export default function Personaliza({ telas = [] }) {
                     </div>
                 </div>
             </main>
+
+            {/* MODAL: VER TODAS LAS TELAS */}
+            {showAllTelas && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 animate-fade-in">
+                    <div className="bg-white w-full h-full sm:h-auto sm:max-w-4xl sm:max-h-[85vh] sm:rounded-[2rem] shadow-2xl flex flex-col overflow-hidden">
+                        {/* Modal Header */}
+                        <div className="flex justify-between items-center p-6 border-b border-gray-100 flex-shrink-0">
+                            <div>
+                                <h3 className="text-xl font-serif text-[#132d46]">Catálogo de Telas</h3>
+                                <p className="text-xs text-gray-400 mt-1">Selecciona cualquier tapiz para aplicarlo a tu silla</p>
+                            </div>
+                            <button 
+                                onClick={() => setShowAllTelas(false)}
+                                className="w-10 h-10 bg-gray-50 hover:bg-gray-200 rounded-full flex justify-center items-center text-gray-500 transition-colors"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                        
+                        {/* Modal Body (Grid) */}
+                        <div className="p-6 overflow-y-auto flex-1 hide-scrollbar bg-gray-50/50">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                                {telas.map((tela) => (
+                                    <button
+                                        key={tela.id}
+                                        onClick={() => {
+                                            setSelectedTela(tela);
+                                            setShowAllTelas(false);
+                                            if (mobileMenuOpen === 'tela') setMobileMenuOpen(null);
+                                        }}
+                                        className="group flex flex-col items-center gap-3 bg-white p-3 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100"
+                                    >
+                                        <div
+                                            className={`w-full aspect-square rounded-xl bg-cover bg-center transition-transform duration-300 group-hover:scale-105 ${
+                                                selectedTela?.id === tela.id ? 'ring-4 ring-[#01c38e]' : 'ring-1 ring-gray-200'
+                                            }`}
+                                            style={{ backgroundImage: `url(${tela.imagen_url})` }}
+                                        ></div>
+                                        <span className={`text-xs font-bold text-center leading-tight ${selectedTela?.id === tela.id ? 'text-[#01c38e]' : 'text-gray-500 group-hover:text-gray-900'}`}>{tela.nombre}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style>{`
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
