@@ -63,6 +63,22 @@ export default function Personaliza({ telas = [] }) {
     const [fierroColor, setFierroColor] = useState('blanco');
     const [selectedTela, setSelectedTela] = useState(telas.length > 0 ? telas[0] : null);
     const [currentStep, setCurrentStep] = useState(1);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(null); // 'fierro', 'tela', o null
+    const [telaSearch, setTelaSearch] = useState('');
+
+    const filteredTelas = telas.filter(tela => tela.nombre.toLowerCase().includes(telaSearch.toLowerCase()));
+
+    const handleConfirm = () => {
+        const colorName = CONFIG_COLORES_FIERRO[fierroColor]?.nombre || 'Desconocido';
+        const telaName = selectedTela?.nombre || 'Ninguna';
+        const mensaje = `Hola, quiero pedir la silla personalizada.\n\n*Detalles de mi diseño:*\n- Color del Fierro: ${colorName}\n- Tapiz: ${telaName}\n\n¿Me pueden brindar más información?`;
+        
+        // Puedes reemplazar este número con tu número real de WhatsApp. Ej: '51999999999'
+        const telefono = '51999999999'; 
+        const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+        
+        window.open(url, '_blank');
+    };
 
     // Generamos las opciones de fierro dinámicamente desde la variable global de arriba
     const fierroOptions = Object.keys(CONFIG_COLORES_FIERRO).map(key => ({
@@ -101,15 +117,18 @@ export default function Personaliza({ telas = [] }) {
     ];
 
     return (
-        <div className="h-screen flex flex-col bg-white text-gray-900 font-sans selection:bg-[#01c38e] selection:text-white overflow-hidden">
+        <div className="h-[100dvh] flex flex-col bg-white text-gray-900 font-sans selection:bg-[#01c38e] selection:text-white overflow-hidden">
             <Head title="Personaliza tu Silla" />
             <Header />
 
             <main className="flex-1 pt-20 flex flex-col md:flex-row h-full overflow-hidden">
                 {/* LADO IZQUIERDO: Visualizador de Silla 3D/Imagen */}
-                <div className="relative w-full md:w-1/2 h-[400px] md:h-full bg-white flex justify-center items-center overflow-visible">
+                <div className="relative w-full h-full md:w-1/2 bg-white flex justify-center items-center overflow-visible md:overflow-hidden">
 
-                    <div className="relative w-full max-w-md aspect-square z-10 flex justify-center items-center">
+                    <div 
+                        className="relative w-full max-w-md aspect-square z-10 flex justify-center items-center -translate-y-16 md:translate-y-0"
+                        style={{ containerType: 'inline-size' }}
+                    >
                         
                         {/* Fondo Mancha "Vaca" (Blob) con degradado radial */}
                         <div 
@@ -169,9 +188,10 @@ export default function Personaliza({ telas = [] }) {
                                 }}
                             >
                                 {tapizPieces.map((piece) => {
-                                    // Tamaños fijos en píxeles configurables independientemente
-                                    const sizeLaterales = 160; // Tamaño para lado derecho e izquierdo
-                                    const sizeSuperior = 110;  // Tamaño independiente para la parte de arriba
+                                    // Tamaños relativos al contenedor (448px max-w).
+                                    // 160px / 448px = ~35.7%, 110px / 448px = ~24.5%
+                                    const sizeLaterales = '35.7cqw'; // Tamaño para lado derecho e izquierdo
+                                    const sizeSuperior = '24.5cqw';  // Tamaño independiente para la parte de arriba
                                     
                                     const currentSize = piece.name === 'superior' ? sizeSuperior : sizeLaterales;
 
@@ -211,8 +231,8 @@ export default function Personaliza({ telas = [] }) {
                                                     width: '300%',
                                                     height: '300%',
                                                     backgroundImage: `url(${selectedTela.imagen_url})`,
-                                                    // Usamos el tamaño fijo en px en lugar de porcentajes
-                                                    backgroundSize: `${currentSize}px auto`,
+                                                    // Usamos unidades cqw para escalar con el contenedor de la silla
+                                                    backgroundSize: `${currentSize} auto`,
                                                     backgroundPosition: 'center',
                                                     backgroundRepeat: 'repeat',
                                                     transform: piece.bgTransform,
@@ -230,27 +250,141 @@ export default function Personaliza({ telas = [] }) {
                             </div>
                         )}
                     </div>
+
+                    {/* INTERFAZ FLOTANTE PARA MÓVILES (FABs) */}
+                    <div className="md:hidden absolute right-4 top-[35%] -translate-y-1/2 flex flex-col gap-5 z-50">
+                        {/* Botón Colores Fierro */}
+                        <button 
+                            onClick={() => setMobileMenuOpen(mobileMenuOpen === 'fierro' ? null : 'fierro')}
+                            className={`w-14 h-14 rounded-full shadow-lg border flex justify-center items-center transition-all ${mobileMenuOpen === 'fierro' ? 'bg-[#132d46] text-white border-transparent scale-110' : 'bg-white text-[#132d46] border-gray-100 hover:bg-gray-50'}`}
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                        </button>
+
+                        {/* Botón Tapiz Tela */}
+                        <button 
+                            onClick={() => setMobileMenuOpen(mobileMenuOpen === 'tela' ? null : 'tela')}
+                            className={`w-14 h-14 rounded-full shadow-lg border flex justify-center items-center transition-all ${mobileMenuOpen === 'tela' ? 'bg-[#132d46] text-white border-transparent scale-110' : 'bg-white text-[#132d46] border-gray-100 hover:bg-gray-50'}`}
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </button>
+
+                        {/* Botón Confirmar (Check) */}
+                        <button 
+                            onClick={handleConfirm}
+                            className="w-14 h-14 rounded-full bg-[#01c38e] shadow-lg flex justify-center items-center text-white hover:bg-[#01a679] transition-transform hover:scale-110 mt-2"
+                        >
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                        </button>
+                    </div>
+
+                    {/* MENÚS DESPLEGABLES (DRAWERS) MÓVILES */}
+                    {/* Drawer: Fierro */}
+                    <div className={`md:hidden absolute bottom-16 left-4 right-4 bg-white rounded-3xl shadow-[0_15px_50px_rgba(0,0,0,0.25)] transition-transform duration-300 z-40 p-6 pt-8 ${mobileMenuOpen === 'fierro' ? 'translate-y-0 opacity-100' : 'translate-y-[120%] opacity-0 pointer-events-none'}`}>
+                        <button onClick={() => setMobileMenuOpen(null)} className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                        <h4 className="text-[11px] tracking-widest text-[#01c38e] uppercase font-bold text-center mb-6">Elige el Color del Fierro</h4>
+                        <div className="flex overflow-x-auto gap-4 pb-2 px-2 snap-x snap-mandatory hide-scrollbar">
+                            {fierroOptions.map((fierro) => (
+                                <button
+                                    key={fierro.id}
+                                    onClick={() => setFierroColor(fierro.id)}
+                                    className={`group flex-shrink-0 snap-center flex flex-col items-center gap-3 p-2 rounded-xl transition-all duration-300`}
+                                >
+                                    <span
+                                        className={`w-20 h-20 rounded-full border-2 shadow-sm transition-transform duration-300 ${
+                                            fierroColor === fierro.id ? 'border-[#01c38e] ring-4 ring-[#01c38e]/20 scale-110' : 'border-gray-200 scale-100'
+                                        }`}
+                                        style={{ backgroundColor: fierro.hex }}
+                                    ></span>
+                                    <span className={`text-[11px] font-bold text-center leading-tight ${fierroColor === fierro.id ? 'text-[#01c38e]' : 'text-gray-500'}`}>{fierro.name}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Drawer: Tela */}
+                    <div className={`md:hidden absolute bottom-16 left-4 right-4 bg-white rounded-3xl shadow-[0_15px_50px_rgba(0,0,0,0.25)] transition-transform duration-300 z-40 p-6 pt-8 ${mobileMenuOpen === 'tela' ? 'translate-y-0 opacity-100' : 'translate-y-[120%] opacity-0 pointer-events-none'}`}>
+                        <button onClick={() => setMobileMenuOpen(null)} className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 bg-gray-100 rounded-full">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                        <h4 className="text-[11px] tracking-widest text-[#01c38e] uppercase font-bold text-center mb-4">Elige el Tapiz</h4>
+                        
+                        {/* Buscador Móvil */}
+                        <div className="mb-4 px-2">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Buscar tapiz..."
+                                    value={telaSearch}
+                                    onChange={(e) => setTelaSearch(e.target.value)}
+                                    className="w-full bg-gray-50 border-transparent focus:border-[#01c38e] focus:ring-[#01c38e] rounded-xl text-sm pl-10 py-2.5 shadow-inner"
+                                />
+                                <svg className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                        </div>
+
+                        {filteredTelas.length === 0 ? (
+                            <p className="text-gray-400 text-sm text-center pb-2">No se encontró ninguna tela.</p>
+                        ) : (
+                            <div className="flex overflow-x-auto gap-4 pb-2 px-2 snap-x snap-mandatory hide-scrollbar">
+                                {filteredTelas.map((tela) => (
+                                    <button
+                                        key={tela.id}
+                                        onClick={() => setSelectedTela(tela)}
+                                        className={`group flex-shrink-0 snap-start flex flex-col items-center gap-3 p-2 rounded-xl transition-all duration-300`}
+                                    >
+                                        <div
+                                            className={`w-24 h-24 rounded-full bg-cover bg-center border-2 shadow-sm transition-transform duration-300 ${
+                                                selectedTela?.id === tela.id ? 'border-[#01c38e] ring-4 ring-[#01c38e]/20 scale-110' : 'border-gray-200 scale-100'
+                                            }`}
+                                            style={{ backgroundImage: `url(${tela.imagen_url})` }}
+                                        ></div>
+                                        <span className={`text-[11px] font-bold text-center leading-tight ${selectedTela?.id === tela.id ? 'text-[#01c38e]' : 'text-gray-500'}`}>{tela.nombre}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
                 </div>
 
-                {/* LADO DERECHO: Panel Configurador */}
-                <div className="w-full md:w-1/2 h-full p-8 sm:p-12 md:p-16 flex flex-col justify-start bg-white">
+                {/* LADO DERECHO: Panel Configurador (Solo visible en PC) */}
+                <div className="hidden md:flex w-full md:w-1/2 h-full p-8 sm:p-12 md:p-16 flex-col justify-start bg-white">
                     <h4 className="text-xs tracking-[0.2em] text-[#01c38e] uppercase mb-4 font-bold flex-shrink-0">Configurador</h4>
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-[#132d46] mb-4 leading-tight flex-shrink-0">Personaliza tu silla.</h1>
                     <p className="text-gray-500 mb-8 text-base flex-shrink-0">Elige cada detalle y crea una pieza que hable de tu espacio.</p>
 
-                    <div className="flex border-b border-gray-200 mb-8 gap-8 text-[11px] font-bold tracking-widest uppercase cursor-pointer select-none flex-shrink-0">
-                        <div 
-                            onClick={() => setCurrentStep(1)}
-                            className={`pb-3 border-b-2 transition-colors ${currentStep === 1 ? 'border-[#132d46] text-[#132d46]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
-                        >
-                            <span className={`${currentStep === 1 ? 'text-gray-400' : ''} mr-2`}>01</span> Fierro
+                    <div className="flex justify-between items-end border-b border-gray-200 mb-8 flex-shrink-0">
+                        <div className="flex gap-8 text-[11px] font-bold tracking-widest uppercase cursor-pointer select-none">
+                            <div 
+                                onClick={() => setCurrentStep(1)}
+                                className={`pb-3 border-b-2 transition-colors ${currentStep === 1 ? 'border-[#132d46] text-[#132d46]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
+                            >
+                                <span className={`${currentStep === 1 ? 'text-gray-400' : ''} mr-2`}>01</span> Fierro
+                            </div>
+                            <div 
+                                onClick={() => setCurrentStep(2)}
+                                className={`pb-3 border-b-2 transition-colors ${currentStep === 2 ? 'border-[#132d46] text-[#132d46]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
+                            >
+                                <span className={`${currentStep === 2 ? 'text-gray-400' : ''} mr-2`}>02</span> Tela
+                            </div>
                         </div>
-                        <div 
-                            onClick={() => setCurrentStep(2)}
-                            className={`pb-3 border-b-2 transition-colors ${currentStep === 2 ? 'border-[#132d46] text-[#132d46]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
-                        >
-                            <span className={`${currentStep === 2 ? 'text-gray-400' : ''} mr-2`}>02</span> Tela
-                        </div>
+
+                        {/* Buscador PC (junto a las pestañas) */}
+                        {currentStep === 2 && (
+                            <div className="hidden md:block relative w-56 pb-2">
+                                <input
+                                    type="text"
+                                    placeholder="Buscar tapiz por nombre..."
+                                    value={telaSearch}
+                                    onChange={(e) => setTelaSearch(e.target.value)}
+                                    className="w-full bg-gray-50 border-transparent focus:border-[#01c38e] focus:ring-[#01c38e] rounded-xl text-xs pl-8 py-2 shadow-inner"
+                                />
+                                <svg className="w-3 h-3 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 mt-[-4px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                        )}
                     </div>
 
                     {/* CONTENEDOR DESLIZABLE PARA LOS PASOS */}
@@ -263,15 +397,15 @@ export default function Personaliza({ telas = [] }) {
                                     <button
                                         key={fierro.id}
                                         onClick={() => setFierroColor(fierro.id)}
-                                        className={`group flex flex-col items-center gap-3 p-2 rounded-xl transition-all duration-300 w-24 sm:w-28`}
+                                        className={`group flex flex-col items-center gap-3 p-2 rounded-xl transition-all duration-300 w-28`}
                                     >
                                         <span
-                                            className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 shadow-sm transition-transform duration-300 group-hover:scale-110 ${
+                                            className={`w-24 h-24 rounded-full border-2 shadow-sm transition-transform duration-300 group-hover:scale-110 ${
                                                 fierroColor === fierro.id ? 'border-[#01c38e] ring-4 ring-[#01c38e]/20' : 'border-gray-200'
                                             }`}
                                             style={{ backgroundColor: fierro.hex }}
                                         ></span>
-                                        <span className={`text-[10px] sm:text-xs font-bold text-center leading-tight ${fierroColor === fierro.id ? 'text-[#01c38e]' : 'text-gray-500 group-hover:text-gray-900'}`}>{fierro.name}</span>
+                                        <span className={`text-xs font-bold text-center leading-tight ${fierroColor === fierro.id ? 'text-[#01c38e]' : 'text-gray-500 group-hover:text-gray-900'}`}>{fierro.name}</span>
                                     </button>
                                 ))}
                             </div>
@@ -281,23 +415,24 @@ export default function Personaliza({ telas = [] }) {
                         {/* PASO 2: TELA */}
                         {currentStep === 2 && (
                             <div className="animate-fade-in w-full">
-                            {telas.length === 0 ? (
-                                <p className="text-gray-400 text-sm">No hay telas disponibles en la base de datos.</p>
+
+                            {filteredTelas.length === 0 ? (
+                                <p className="text-gray-400 text-sm">No se encontró ninguna tela con ese nombre.</p>
                             ) : (
                                 <div className="flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory scroll-smooth hide-scrollbar w-full">
-                                    {telas.map((tela) => (
+                                    {filteredTelas.map((tela) => (
                                         <button
                                             key={tela.id}
                                             onClick={() => setSelectedTela(tela)}
-                                            className={`group flex-shrink-0 snap-start flex flex-col items-center gap-3 p-2 rounded-xl transition-all duration-300 w-28 sm:w-36`}
+                                            className={`group flex-shrink-0 snap-start flex flex-col items-center gap-3 p-2 rounded-xl transition-all duration-300 w-36`}
                                         >
                                             <div
-                                                className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-cover bg-center border-2 shadow-sm transition-transform duration-300 group-hover:scale-105 ${
+                                                className={`w-32 h-32 rounded-full bg-cover bg-center border-2 shadow-sm transition-transform duration-300 group-hover:scale-105 ${
                                                     selectedTela?.id === tela.id ? 'border-[#01c38e] ring-4 ring-[#01c38e]/20' : 'border-gray-200'
                                                 }`}
                                                 style={{ backgroundImage: `url(${tela.imagen_url})` }}
                                             ></div>
-                                            <span className={`text-[10px] sm:text-xs font-bold text-center leading-tight ${selectedTela?.id === tela.id ? 'text-[#01c38e]' : 'text-gray-500 group-hover:text-gray-900'}`}>{tela.nombre}</span>
+                                            <span className={`text-xs font-bold text-center leading-tight ${selectedTela?.id === tela.id ? 'text-[#01c38e]' : 'text-gray-500 group-hover:text-gray-900'}`}>{tela.nombre}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -337,7 +472,10 @@ export default function Personaliza({ telas = [] }) {
                                     <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                 </button>
                             ) : (
-                                <button className="bg-[#01c38e] text-white rounded-full px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#01a679] transition-colors shadow-lg flex items-center gap-2 group">
+                                <button 
+                                    onClick={handleConfirm}
+                                    className="bg-[#01c38e] text-white rounded-full px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#01a679] transition-colors shadow-lg flex items-center gap-2 group"
+                                >
                                     Confirmar
                                     <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                                 </button>
