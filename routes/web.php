@@ -54,7 +54,9 @@ Route::get('/catalogo', function () {
 });
 
 Route::get('/personaliza', function () {
-    return Inertia::render('Personaliza');
+    return Inertia::render('Personaliza', [
+        'telas' => \App\Models\Tela::all()
+    ]);
 });
 
 Route::get('/nosotros', function () {
